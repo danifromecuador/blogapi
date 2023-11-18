@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 Rails.application.routes.draw do
-  root 'home#home'
+ get '/health', to: 'health#health'
 end
