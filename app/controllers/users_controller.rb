@@ -13,8 +13,12 @@ class UsersController < ApplicationController
 
   def create
     # POST /users
-    User.create(create_params)
-    render json: 'User created', status: :created
+    new_user = User.create(create_params)
+    if new_user.valid?
+      render json: 'User created sucessfully', status: :created
+    else
+      render json: 'That user or email already exists', status: :bad_request
+    end
   end
 
   def update
