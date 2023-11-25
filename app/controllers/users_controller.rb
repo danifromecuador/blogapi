@@ -8,7 +8,11 @@ class UsersController < ApplicationController
   def show
     # GET /users/:id
     @user = User.find_by_id(params[:id])
-    render json: @user, status: :ok
+    if @user.valid?
+      render json: @user, status: :ok
+    else
+      render json: 'User not found', status: :not_found
+    end
   end
 
   def create
