@@ -31,15 +31,23 @@ class PostsController < ApplicationController
   end
 
   def update
-    @post = Post.find_by_id(params[:id])
-    @post.update(update_params)
-    render json: 'Post updated', status: :ok
+    post = Post.find_by_id(params[:id])
+    if post.nil?
+      render json: 'Post not found', status: :not_found
+    else
+      post.update(update_params)
+      render json: 'Post updated', status: :ok
+    end
   end
 
   def destroy
-    @post = Post.find_by_id(params[:id])
-    @post.destroy
-    render json: 'Post deleted', status: :ok
+    post = Post.find_by_id(params[:id])
+    if post.nil?
+      render json: 'Post not found', status: :not_found
+    else
+      post.destroy
+      render json: 'Post deleted', status: :ok
+    end
   end
 
   private
