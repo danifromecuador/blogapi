@@ -1,17 +1,33 @@
 class PostsController < ApplicationController
   def index
-    @posts = Post.all.order(:updated_at).reverse_order
-    render json: @posts, status: :ok
+    posts = Post.all.order(:updated_at).reverse_order
+    if posts.empty?
+      render json: 'No posts found', status: :not_found
+    else
+      render json: @posts, status: :ok
+    end
   end
 
   def show
-    @post = Post.find_by_id(params[:id])
-    render json: @post, status: :ok
+    post = Post.find_by_id(params[:id])
+    if post.nil?
+      render json: 'Post not found', status: :not_found
+    else
+      render json: @post, status: :ok
+    end
   end
 
   def create
-    Post.create(create_params)
-    render json: 'Post created', status: :created
+    post = Post.create(create_params)
+    if post.valid?
+      render json: 'Post created', status: :created
+    else
+      error_messages = []
+      post.errors.messages.each do |m|
+        error_messages << m.join(' ')
+      end
+      render json: error_messages, status: :bad_request
+    end
   end
 
   def update
@@ -29,7 +45,7 @@ class PostsController < ApplicationController
   private
 
   def create_params
-    params.permit(:user_id, :title, :content, :published)
+    params.permit(:user_id, :title, :content)
   end
 
   def update_params
